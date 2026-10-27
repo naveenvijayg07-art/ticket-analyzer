@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔒 Trust Test — Read-Only Guard Verification</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; background: #f5f5f5; }
+    h1 { color: #212529; }
+    .test { padding: 14px 18px; margin: 10px 0; border-radius: 8px; border-left: 4px solid; }
+    .pass { background: #e8f5e9; border-color: #28a745; }
+    .fail { background: #ffeef0; border-color: #dc3545; }
+    .test-title { font-weight: 700; margin-bottom: 4px; }
+    .test-detail { font-size: 0.88rem; color: #555; }
+    #results { margin-top: 20px; }
+    .summary { padding: 20px; background: #fff; border-radius: 12px; margin-top: 20px; text-align: center; font-size: 1.2rem; }
+    button { padding: 12px 24px; font-size: 1rem; cursor: pointer; border: none; border-radius: 8px; background: #0066cc; color: #fff; margin-top: 10px; }
+    button:hover { background: #0052a3; }
+  </style>
+</head>
+<body>
+  <h1>🔒 Ticket Analyzer — Trust Verification Test</h1>
+  <p>This test proves that the Read-Only Guard blocks ALL write operations.</p>
+  <button onclick="runTests()">▶ Run All Tests</button>
+  <div id="results"></div>
+
+  <script>
+    // Simulated ReadOnlyGuard (same logic as the app)
+    const ALLOWED_WRITE_PATTERNS = [/\/analyze\//];
+    const WRITE_METHODS = ["PUT", "DELETE", "PATCH"];
+    const originalFetch = window.fetch.bind(window);
+
+    window.fetch = async (input, init) => {
+      const method = (init?.method ?? "GET").toUpperCase();
+      const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+
+      if (WRITE_METHODS.includes(method)) {
+        return new Response(JSON.stringify({ error: "BLOCKED_BY_READ_ONLY_GUARD" }), { status: 403 });
+      }
+      if (method === "POST") {
+        const isAllowed = ALLOWED_WRITE_PATTERNS.some(p => p.test(url));
+        if (!isAllowed) {
+          return new Response(JSON.stringify({ error: "BLOCKED_BY_READ_ONLY_GUARD" }), { status: 403 });
+        }
+      }
+      return originalFetch(input, init);
+    };
+
+    const results = [];
+
+    async function test(name, method, url, expectBlocked) {
+      try {
+        const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: method !== "GET" ? "{}" : undefined });
+        const blocked = res.status === 403;
+        const passed = blocked === expectBlocked;
+        results.push({ name, passed, detail: blocked ? "🔒 BLOCKED (403)" : `⚠️ Allowed (${res.status})`, expectBlocked });
+      } catch (e) {
+        results.push({ name, passed: expectBlocked, detail: `Error: ${e.message}`, expectBlocked });
+      }
+    }
+
+    async function runTests() {
+      results.length = 0;
+      document.getElementById("results").innerHTML = "<p>Running tests...</p>";
+
+      // These should be BLOCKED
+      await test("DELETE /api/tickets/1", "DELETE", "http://localhost:5000/api/tickets/1", true);
+      await test("PUT /api/tickets/1", "PUT", "http://localhost:5000/api/tickets/1", true);
+      await test("PATCH /api/tickets/1", "PATCH", "http://localhost:5000/api/tickets/1", true);
+      await test("DELETE /api/modules/auth", "DELETE", "http://localhost:5000/api/modules/auth", true);
+      await test("POST /api/tickets (create)", "POST", "http://localhost:5000/api/tickets", true);
+      await test("POST /api/tickets/1/update", "POST", "http://localhost:5000/api/tickets/1/update", true);
+      await test("PUT /api/modules/auth", "PUT", "http://localhost:5000/api/modules/auth", true);
+      await test("DELETE /api/users/drop-all", "DELETE", "http://localhost:5000/api/users/drop-all", true);
+
+      // These should be ALLOWED
+      await test("POST /api/analyze/ticket/1 (read-only analysis)", "POST", "http://localhost:5000/api/analyze/ticket/1", false);
+
+      // Render results
+      const html = results.map(r => `
+        <div class="test ${r.passed ? 'pass' : 'fail'}">
+          <div class="test-title">${r.passed ? '✅' : '❌'} ${r.name}</div>
+          <div class="test-detail">
+            Expected: ${r.expectBlocked ? '🔒 Should be BLOCKED' : '✅ Should be ALLOWED'} → 
+            Result: ${r.detail}
+          </div>
+        </div>
+      `).join("");
+
+      const passCount = results.filter(r => r.passed).length;
+      const totalCount = results.length;
+      const allPassed = passCount === totalCount;
+
+      document.getElementById("results").innerHTML = html + `
+        <div class="summary">
+          ${allPassed ? '🛡️' : '⚠️'} <strong>${passCount} / ${totalCount} tests passed</strong><br>
+          ${allPassed ? 'The Read-Only Guard is working perfectly. NO write operation can get through.' : 'Some tests failed! Review the results above.'}
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
+

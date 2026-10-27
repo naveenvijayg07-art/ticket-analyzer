@@ -1,0 +1,180 @@
+/* ============================================================
+   📂 src/styles/global.css
+   PURPOSE: Base styles — fonts, colours, resets, utility classes.
+   ============================================================ */
+
+/* ── CSS Variables (easy to customise) ─────────────────────── */
+:root {
+  --color-primary: #0066cc;
+  --color-danger: #dc3545;
+  --color-success: #28a745;
+  --color-warning: #e07b00;
+  --color-muted: #6c757d;
+  --color-bg: #f4f6f9;
+  --color-card: #ffffff;
+  --color-border: #dee2e6;
+  --color-text: #212529;
+  --color-text-light: #6c757d;
+  --radius: 8px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --font: "Inter", "Segoe UI", sans-serif;
+}
+
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── Page wrapper ───────────────────────────────────────────── */
+.page { padding: 24px 32px; max-width: 1280px; margin: 0 auto; }
+.page-header { margin-bottom: 20px; }
+.page-title { font-size: 1.6rem; font-weight: 700; color: var(--color-text); }
+.page-subtitle { color: var(--color-text-light); margin-top: 4px; }
+
+/* ── Read-Only Badge ─────────────────────────────────────────── */
+.read-only-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffc107;
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* ── Card ───────────────────────────────────────────────────── */
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card-title { font-size: 1rem; font-weight: 700; }
+.card-body { padding: 16px 20px; }
+
+/* ── Status & Priority chips ─────────────────────────────────── */
+.status-chip, .priority-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-muted);
+}
+
+.priority-chip { background: transparent; font-weight: 700; }
+
+/* ── Tags row ───────────────────────────────────────────────── */
+.tags-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.module-tag, .table-tag {
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.module-tag { background: #e8f0fe; color: #1a56db; }
+.table-tag  { background: #f3e8ff; color: #6f42c1; }
+
+/* ── Empty state ─────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  color: var(--color-text-light);
+  padding: 40px 20px;
+  font-size: 0.95rem;
+}
+
+/* ── Loading spinner ─────────────────────────────────────────── */
+.loading-spinner-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  gap: 14px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.spinner-message { color: var(--color-text-light); font-size: 0.9rem; }
+
+/* ── Error message ───────────────────────────────────────────── */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff5f5;
+  border: 1px solid #fc8181;
+  color: #c53030;
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin: 20px 0;
+}
+
+/* ── Back button ─────────────────────────────────────────────── */
+.back-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 6px 14px;
+  cursor: pointer;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  transition: background 0.15s;
+}
+.back-btn:hover { background: var(--color-bg); }
+
+/* ── Controls row ────────────────────────────────────────────── */
+.controls-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.results-count {
+  color: var(--color-text-light);
+  font-size: 0.88rem;
+  margin-bottom: 10px;
+}
+
+/* ── Not Found page ──────────────────────────────────────────── */
+.not-found-page {
+  text-align: center;
+  padding: 100px 20px;
+}
+.not-found-page h1 { font-size: 5rem; color: var(--color-muted); }
+.not-found-page p { font-size: 1.1rem; margin: 12px 0 24px; }
+

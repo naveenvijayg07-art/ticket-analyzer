@@ -1,0 +1,73 @@
+/* ============================================================
+   📂 src/styles/layout.css
+   PURPOSE: Navbar, Layout wrapper, footer styles.
+   ============================================================ */
+
+/* ── App layout shell ────────────────────────────────────────── */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+}
+
+/* ── Navbar ──────────────────────────────────────────────────── */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 56px;
+  background: #ffffff;
+  border-bottom: 1px solid #dee2e6;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #212529;
+  text-decoration: none;
+}
+
+.brand-icon { font-size: 1.3rem; }
+
+.navbar-links {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-link {
+  padding: 6px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #495057;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-link:hover { background: #f4f6f9; color: #0066cc; }
+.nav-link.active { background: #e8f0fe; color: #0066cc; font-weight: 600; }
+
+.navbar-right { display: flex; align-items: center; }
+
+/* ── Footer ──────────────────────────────────────────────────── */
+.app-footer {
+  text-align: center;
+  padding: 14px;
+  font-size: 0.82rem;
+  color: #6c757d;
+  border-top: 1px solid #dee2e6;
+  background: #fff;
+}
+
